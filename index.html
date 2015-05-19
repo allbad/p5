@@ -17,7 +17,24 @@
 	<input data-bind="value: newLocation" placeholder="Search locations">
 
 	<div id="map-canvas" class="map" data-bind="googlemap: {location: location, centerLat: 51.5380286, centerLon: -0.0449686}">
-</div>
+    </div>
+
+    <div id="listBox">
+        <div class="list-heading">
+            <h2>Local <span><img src="img/yelp_logo_75x38.png"></span> Spots</h2>
+        </div>
+        <div class="list-group">
+            <ul class="list-details" data-bind="foreach: yelpSelect" id="side-menu-collapse">
+                <hr>
+                <li data-bind="click: $parent.clickYelpSpot">
+                    <h3><span class="list-group-item-heading" data-bind="text: name"></span></h3>
+                    <p><span class="list-group-item-address" data-bind="text: location.display_address"></span></p>
+                    <p><img data-bind="attr:{src: rating_img_url}" /></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>

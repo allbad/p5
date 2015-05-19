@@ -11,3 +11,61 @@ body {
 #map-canvas {
 	height: 100%;
 }
+
+#listBox {
+	max-width: 300px;
+	padding-left: 5px;
+	padding-right: 5px;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+	z-index: 102;
+	position: fixed;
+	top: 100px;
+	right: 15px;
+	background-color: #FFFFFF;
+}
+
+.list-heading h2 {
+	font-family: 'Quicksand', sans-serif;
+	display: inline;
+	vertical-align: center;
+	font-size: 24px;
+}
+
+.list-details {
+  font-size: 12px;
+  font-family: 'Quicksand', sans-serif;
+  color: #333;
+  list-style: none;
+  max-width: 300px;
+  height: 500px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.list-details li:hover {
+	background-color: #FFF3E0;
+}
+
+.list-details li:active {
+	background-color: #FFD180;
+}
+
+
+.list-details::-webkit-scrollbar {
+	width: 10px;
+	overflow: visible;
+}
+
+.list-group-item-heading {
+	font-weight: bold;
+	font-size: 14px;
+	color: #404040;
+}
+
+.list-group-item-category,
+.list-group-item-address {
+	margin-bottom: 10px;
+}

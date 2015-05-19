@@ -3,12 +3,14 @@ var viewModel = function() {
 	var map;
 	var lauriston = new google.maps.LatLng(51.5380286, -0.0449686);
 	var startLocation = lauriston;
+	var iconBase = "img/";
+	var mapMarkers = [];
 
 	self.location = ko.observable(startLocation);
 
 	initializeMap();
 
-	self.topPicks = ko.observableArray([]);
+	self.yelpSelect = ko.observableArray([]);
 
 	self.newLocation = ko.computed(function() {
 		if (self.location() != '') {
@@ -16,11 +18,40 @@ var viewModel = function() {
 		}
 	});
 
+	self.clickYelpSpot = function(clickedSpot) {
+		var clickedSpotName = clickedSpot.name;
+		for (var i = 0; i < mapMarkers.length; i ++) {
+			if (clickedSpotName === mapMarkers[i].title) {
+				console.log("I was clicked!!" + clickedSpotName);
+				google.maps.event.trigger(mapMarkers[i], 'click');
+				map.panTo(mapMarkers[i].position);
+				map.setZoom(15);
+			}
+		}
+	};
+
 	function initializeMap() {
 		var mapOptions = {
 			zoom: 17,
-			center: lauriston
-		};
+			center: lauriston,
+			zoomControl: true,
+            zoomControlOptions: {
+                style: google.maps.ZoomControlStyle.DEFAULT,
+                position: google.maps.ControlPosition.LEFT_BOTTOM
+            },
+            disableDoubleClickZoom: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            scrollwheel: true,
+            panControl: false,
+            streetViewControl: false,
+            draggable : true,
+            overviewMapControl: true,
+            overviewMapControlOptions: {
+                opened: false,
+            },
+			styles: [{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]}],
+        };
 
 		map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
 	}
@@ -38,7 +69,6 @@ var viewModel = function() {
 	function locationCallback(location, status) {
 		if (status == google.maps.places.PlacesServiceStatus.OK) {
 			getNeighborhoodInformation(location[0]);
-			console.log("value of location:" + location[0]);
 		} else {
 			console.log("Invalid location, not found in Google Maps");
 		}
@@ -50,7 +80,6 @@ var viewModel = function() {
 		var name  = locationDetail.name;
 		newLocation = new google.maps.LatLng(lat,lng);
 		map.setCenter(newLocation);
-		console.log("Lat and long for  " + name + " : " + lat + "**" + lng);
 
 		var auth = {
 				//
@@ -77,7 +106,7 @@ var viewModel = function() {
 			parameters.push(['oauth_token', auth.accessToken]);
 			parameters.push(['oauth_signature_method', 'HMAC-SHA1']);
 			var message = {
-				'action' : 'http://api.yelp.com/v2/search/?location=E9 7JN&sort=2&limit=20&radius_filter=2500&cc=GB',
+				'action' : 'http://api.yelp.com/v2/search/?location=E9 7JN&sort=2&limit=20&radius_filter=650&cc=GB',
 				'method' : 'GET',
 				'parameters' : parameters
 			};
@@ -85,7 +114,6 @@ var viewModel = function() {
 			OAuth.SignatureMethod.sign(message, accessor);
 			var parameterMap = OAuth.getParameterMap(message.parameters);
 			parameterMap.oauth_signature = OAuth.percentEncode(parameterMap.oauth_signature)
-			console.log(parameterMap);
 			$.ajax({
 				'url' : message.action,
 				'data' : parameterMap,
@@ -93,11 +121,23 @@ var viewModel = function() {
 				'dataType' : 'jsonp',
 				'jsonpCallback' : 'cb',
 				'success' : function(data, textStats, XMLHttpRequest) {
-					$.each(data.businesses, function(i,item){
-						console.log(item.name + item.url)
-					});
-				}
-			});
+					self.yelpSelect(data.businesses);
+						for (var i in self.yelpSelect()) {
+							console.log(self.yelpSelect()[i].name);
+							var position = new google.maps.LatLng(self.yelpSelect()[i].location.coordinate.latitude, 
+                                               self.yelpSelect()[i].location.coordinate.longitude);
+							createMarker(position);
+						};
+					}
+				});
+		}
+
+	function createMarker(position) {
+		var marker = new google.maps.Marker({
+			map: map,
+			position: position,
+			icon: iconBase + '32px-Yelp.png'
+		})
 	}
 
 }

@@ -5,6 +5,7 @@ var viewModel = function() {
 	var startLocation = lauriston;
 	var iconBase = "img/";
 	var mapMarkers = [];
+	var infoWindow;
 
 	self.location = ko.observable(startLocation);
 
@@ -20,6 +21,8 @@ var viewModel = function() {
 
 	self.clickYelpSpot = function(clickedSpot) {
 		var clickedSpotName = clickedSpot.name;
+		console.log("I was clicked!!" + clickedSpotName);
+		console.log(mapMarkers[i]);
 		for (var i = 0; i < mapMarkers.length; i ++) {
 			if (clickedSpotName === mapMarkers[i].title) {
 				console.log("I was clicked!!" + clickedSpotName);
@@ -123,21 +126,23 @@ var viewModel = function() {
 				'success' : function(data, textStats, XMLHttpRequest) {
 					self.yelpSelect(data.businesses);
 						for (var i in self.yelpSelect()) {
-							console.log(self.yelpSelect()[i].name);
+							/*console.log(self.yelpSelect()[i].name);*/
 							var position = new google.maps.LatLng(self.yelpSelect()[i].location.coordinate.latitude, 
                                                self.yelpSelect()[i].location.coordinate.longitude);
-							createMarker(position);
+							createMarker(self.yelpSelect()[i],position);
 						};
 					}
 				});
 		}
 
-	function createMarker(position) {
+	function createMarker(selection, position) {
+		var name = selection.name;
 		var marker = new google.maps.Marker({
 			map: map,
 			position: position,
+			title: name,
 			icon: iconBase + '32px-Yelp.png'
-		})
+		});
 	}
 
 }

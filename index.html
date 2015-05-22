@@ -11,34 +11,60 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+    
 </head>
 <body>
 
-	<input data-bind="value: newLocation" placeholder="Search locations">
+    <form class="form-inline" role="form">
+        <div class="form-group" id="filterBox">
+            <label class="sr-only" for="inputFind">Find</label>
+            <input type="find" class="form-control" id="inputEmail" placeholder="Find">
+        </div>
+        <div class="form-group" id="searchBox">
+            <label class="sr-only" for="inputFilter">Near</label>
+            <input type="filter" class="form-control" id="inputPassword" placeholder="Near">
+        </div>
+        <button type="submit" class="btn btn-primary btn-custom" id="searchBtn">Search</button>
+    </form>
 
-	<div id="map-canvas" class="map" data-bind="googlemap: {location: location, centerLat: 51.5380286, centerLon: -0.0449686}">
+
+
+
+
+
+
+    <!-- <div id="filterBox">
+        <input type="text" placeholder="Find" required>
+    </div>
+
+    <div id="searchBox">
+        <input data-bind="value: newLocation" type="text" placeholder="Near" required>
+    </div> -->
+
+    <div id="map-canvas" class="map" data-bind="googlemap: {location: location, centerLat: 51.5380286, centerLon: -0.0449686}">
     </div>
 
     <div id="listBox">
         <div class="list-heading">
             <h2>Local <span><img src="img/yelp_logo_75x38.png"></span> Spots</h2>
         </div>
+        <div button class="btn" onclick="map.setOptions({styles: mapStyles.regular})">Alt MAp</div>
         <div class="list-group">
             <ul class="list-details" data-bind="foreach: yelpSelect" id="side-menu-collapse">
                 <hr>
                 <li data-bind="click: $parent.clickYelpSpot">
                     <h3><span class="list-group-item-heading" data-bind="text: name"></span></h3>
                     <p><span class="list-group-item-address" data-bind="text: location.display_address"></span></p>
+                    <!-- <p><span class="list-group-item-phone" data-bind="text: display_phone"></span></p> -->
                     <p><img data-bind="attr:{src: rating_img_url}" /></p>
                 </li>
             </ul>
         </div>
     </div>
 
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
     <script src="js/app.js"></script>
 
 </body>

@@ -1,71 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>P5 Neighborhood Map</title>
-    <link href='http://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel='stylesheet' type='text/css'>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=&libraries=places"></script>
-    <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
-		<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
     
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>P5 Neighborhood Map</title>
+        
+        <!-- Fonts -->
+        <link href='http://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel='stylesheet' type='text/css'>
+        
+        <!-- Map -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.20&key=&libraries=places"></script>
+        
+        <!-- Auth for Yelp -->
+        <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+        <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+        
+        <!-- Libraries -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="js/lib/typeahead.js"></script>
+        
+        <!-- Styles -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    
+    <body>
+        <div id="wrapper">
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper">
+                <nav class="sidebar-nav">
+                    <div class="list-heading">
+                         <h2>Local Yelp Spots</h2>
+                    </div>
+                    <div>
+                        <form id="filter-box" class="input-group">
+                            <input data-bind="value: filter, valueUpdate: 'afterkeydown'" class="form-control" type="text" placeholder="Category (e.g. Pub)" >
+                            
+                            <span class="input-group-btn">
+                                <button id="my-button" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                    <div class="list-group">
+                        <ul class="list-details" data-bind="foreach: filterBusinessList">
+                            
+                            <li class="list-item" data-bind="click: $parent.businessListItem">
+                                
+                                <h3><span class="list-group-item-heading" data-bind="text: name"></span></h3>
 
-    <form class="form-inline" role="form">
-        <div class="form-group" id="filterBox">
-            <label class="sr-only" for="inputFind">Find</label>
-            <input type="find" class="form-control" id="inputEmail" placeholder="Find">
+                                <p><span class="list-group-item-address" data-bind="text: categories[0][0]"></span>
+                                
+                                <p><span class="list-group-item-address" data-bind="text: location.display_address"></span>
+                                </p>
+                                <!-- <p><span class="list-group-item-phone" data-bind="text: display_phone"></span></p> -->
+                                <p>
+                                    <img class="rating-image" data-bind="attr:{src: rating_img_url}" alt="RatingImage"/>
+                                 <span><button class="btn btn-default btn-xs" >Add to Favourites</button></span></p>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <!-- /#sidebar-wrapper -->
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12" id="map-border">
+                            <div id="map-canvas"></div>
+                            <div> <a href="#menu-toggle" class="btn btn-danger" id="menu-toggle">
+                                <span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                            </div>
+                            <form class="input-group" id="search-box">
+                                <input class="form-control" type="text" 
+                                       data-bind="addressAutocomplete: location" 
+                                       placeholder="Where do you want to search?">
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group" id="searchBox">
-            <label class="sr-only" for="inputFilter">Near</label>
-            <input type="filter" class="form-control" id="inputPassword" placeholder="Near">
-        </div>
-        <button type="submit" class="btn btn-primary btn-custom" id="searchBtn">Search</button>
-    </form>
+        <script src="js/styles.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/vm.js"></script>
+    </body>
 
-
-
-
-
-
-
-    <!-- <div id="filterBox">
-        <input type="text" placeholder="Find" required>
-    </div>
-
-    <div id="searchBox">
-        <input data-bind="value: newLocation" type="text" placeholder="Near" required>
-    </div> -->
-
-    <div id="map-canvas" class="map" data-bind="googlemap: {location: location, centerLat: 51.5380286, centerLon: -0.0449686}">
-    </div>
-
-    <div id="listBox">
-        <div class="list-heading">
-            <h2>Local <span><img src="img/yelp_logo_75x38.png"></span> Spots</h2>
-        </div>
-        <div button class="btn" onclick="map.setOptions({styles: mapStyles.regular})">Alt MAp</div>
-        <div class="list-group">
-            <ul class="list-details" data-bind="foreach: yelpSelect" id="side-menu-collapse">
-                <hr>
-                <li data-bind="click: $parent.clickYelpSpot">
-                    <h3><span class="list-group-item-heading" data-bind="text: name"></span></h3>
-                    <p><span class="list-group-item-address" data-bind="text: location.display_address"></span></p>
-                    <!-- <p><span class="list-group-item-phone" data-bind="text: display_phone"></span></p> -->
-                    <p><img data-bind="attr:{src: rating_img_url}" /></p>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <script src="js/app.js"></script>
-
-</body>
 </html>

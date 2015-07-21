@@ -96,7 +96,7 @@ var MyModel = function() {
             return self.businessList();
         } else {
             return ko.utils.arrayFilter(self.businessList(), function(business){
-                return business.name.toLowerCase().indexOf(self.filter().toLowerCase()) >= 0;
+                return business.categories[0][0].toLowerCase().indexOf(self.filter().toLowerCase()) >= 0;
             });
         }
     });
